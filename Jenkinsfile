@@ -34,6 +34,7 @@ podTemplate(name: "ss-build", serviceAccount: 'serverspec-sa', label: nodeLabel,
         String gitKeyContents = sh(script: "cat ${GIT_KEY}", returnStdout: true).trim()
         writeFile(file: "${gitKey}", text: gitKeyContents)
         sh """
+        chmod 600 /home/jenkins/git_id_rsa
         eval `ssh-agent -s`
         ssh-add ${gitKey}
         ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
