@@ -23,7 +23,6 @@ podTemplate(name: "ss-build", serviceAccount: 'serverspec-sa', label: nodeLabel,
       checkout scm
 
       gitCommit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
-      workDir = sh(returnStdout: true, script: 'pwd').trim()
 
 //    Checkout i24 project
 
@@ -41,20 +40,29 @@ podTemplate(name: "ss-build", serviceAccount: 'serverspec-sa', label: nodeLabel,
         ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
         git clone git@bitbucket.org:24imedia/kpn-lg-pilot-build.git backend/24
         git clone git@bitbucket.org:24imedia/kpn-lg-pilot-build.git frontend/24
-        ls -l
-        cd backend
-        ls -l
-        docker build -t backend .
-        cd ../frontend
-        ls -l
-        docker build -t frontend .
         """
       }
-      
 
-      stage('Build Docker image') {
+      stage('Build Docker images') {
         ansiColor('xterm'){
-          sh "echo hoi"
+          sh """
+          cd backend
+          docker build -t registry.platform.svc.appfactory.local/smarttv-backend:${gitCommit} .
+          cd ../frontend
+          docker build -t registry.platform.svc.appfactory.local/smarttv-frontend:${gitCommit} .
+          """
+        }
+      }
+
+      stage('Push Docker image') {
+        ansiColor('xterm'){
+          withCredentials([usernamePassword(credentialsId: 'nexus', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+            sh """
+            docker login -u ${env.USER} -p ${env.PASS}
+            docker push registry.platform.svc.appfactory.local/smarttv-backend:${gitCommit}
+            docker push registry.platform.svc.appfactory.local/smarttv-frontend:${gitCommit}
+            """
+          }
         }
       }
    }
