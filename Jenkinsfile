@@ -66,8 +66,8 @@ podTemplate(name: "ss-build", serviceAccount: 'serverspec-sa', label: nodeLabel,
         ansiColor('xterm'){
           withCredentials([usernamePassword(credentialsId: 'nexus', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
             sh """
-            docker push registry.platform.svc.appfactory.local/smarttv-backend:${gitCommit}
-            docker push registry.platform.svc.appfactory.local/smarttv-frontend:${gitCommit}
+            docker push registry.platform.svc.appfactory.local:5000/smarttv-backend:${gitCommit}
+            docker push registry.platform.svc.appfactory.local:5000/smarttv-frontend:${gitCommit}
             """
           }
         }
