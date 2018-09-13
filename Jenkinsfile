@@ -24,6 +24,14 @@ podTemplate(name: "ss-build", serviceAccount: 'serverspec-sa', label: nodeLabel,
 
       gitCommit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
 
+      stage('Login to nexus') {
+        ansiColor('xterm'){
+          withCredentials([usernamePassword(credentialsId: 'nexus', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+            sh "docker login registry.platform.svc.appfactory.local:5000 -u ${env.USER} -p ${env.PASS}"
+          }
+        }
+      }
+
 //    Checkout i24 project
 
       String gitKey = '/home/jenkins/git_id_rsa'
@@ -58,7 +66,6 @@ podTemplate(name: "ss-build", serviceAccount: 'serverspec-sa', label: nodeLabel,
         ansiColor('xterm'){
           withCredentials([usernamePassword(credentialsId: 'nexus', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
             sh """
-            docker login registry.platform.svc.appfactory.local -u ${env.USER} -p ${env.PASS}
             docker push registry.platform.svc.appfactory.local/smarttv-backend:${gitCommit}
             docker push registry.platform.svc.appfactory.local/smarttv-frontend:${gitCommit}
             """
