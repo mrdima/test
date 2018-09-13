@@ -39,6 +39,9 @@ podTemplate(name: "ss-build", serviceAccount: 'serverspec-sa', label: nodeLabel,
         ssh-add ${gitKey}
         mkdir ~/.ssh
         ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+        git clone git@bitbucket.org:24imedia/kpn-lg-pilot-build.git backend/24
+        git clone git@bitbucket.org:24imedia/kpn-lg-pilot-build.git frontend/24
+        ls -l
         """
       }
       
