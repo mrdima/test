@@ -42,6 +42,12 @@ podTemplate(name: "ss-build", serviceAccount: 'serverspec-sa', label: nodeLabel,
         git clone git@bitbucket.org:24imedia/kpn-lg-pilot-build.git backend/24
         git clone git@bitbucket.org:24imedia/kpn-lg-pilot-build.git frontend/24
         ls -l
+        cd backend
+        ls -l
+        docker build -t backend .
+        cd ../frontend
+        ls -l
+        docker build -t frontend .
         """
       }
       
