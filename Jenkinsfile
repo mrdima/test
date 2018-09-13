@@ -18,10 +18,27 @@ podTemplate(name: "ss-build", serviceAccount: 'serverspec-sa', label: nodeLabel,
 
 {
     node(nodeLabel) {
+
+//    Checkout current project
       checkout scm
 
       gitCommit = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
       workDir = sh(returnStdout: true, script: 'pwd').trim()
+
+//    Checkout i24 project
+
+      String gitKey = '/home/jenkins/git_id_rsa'
+      withCredentials([
+        sshUserPrivateKey(credentialsId: '24i-agalani', keyFileVariable: 'GIT_KEY')
+      ]) {
+        String gitKeyContents = sh(script: "cat ${GIT_KEY}", returnStdout: true).trim()
+        writeFile(file: "${gitKey}", text: gitKeyContents)
+        sh """
+        set +x
+        ssh-add ${gitKey}
+        """
+      }
+      
 
       stage('Build Docker image') {
         ansiColor('xterm'){
