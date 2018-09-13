@@ -37,6 +37,7 @@ podTemplate(name: "ss-build", serviceAccount: 'serverspec-sa', label: nodeLabel,
         chmod 600 /home/jenkins/git_id_rsa
         eval `ssh-agent -s`
         ssh-add ${gitKey}
+        mkdir ~/.ssh
         ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
         """
       }
