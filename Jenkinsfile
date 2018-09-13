@@ -28,4 +28,5 @@ podTemplate(name: "ss-build", serviceAccount: 'serverspec-sa', label: nodeLabel,
           sh "echo hoi"
         }
       }
+   }
 }
